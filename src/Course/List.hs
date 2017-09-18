@@ -58,6 +58,13 @@ foldLeft :: (b -> a -> b) -> b -> List a -> b
 foldLeft _ b Nil      = b
 foldLeft f b (h :. t) = let b' = f b h in b' `seq` foldLeft f b' t
 
+infiniteOnesTwos =
+  1 :. 2 :. infiniteOnesTwos
+
+toThree =
+  1 :. 2 :. 3 :. Nil
+
+
 -- END Helper functions and data types
 
 -- | Returns the head of the list or the given default.
@@ -75,8 +82,7 @@ headOr ::
   a
   -> List a
   -> a
-headOr =
-  error "todo: Course.List#headOr"
+headOr = foldRight const
 
 -- | The product of the elements of a list.
 --
@@ -91,8 +97,7 @@ headOr =
 product ::
   List Int
   -> Int
-product =
-  error "todo: Course.List#product"
+product = foldRight (*) 1
 
 -- | Sum the elements of the list.
 --
@@ -106,8 +111,8 @@ product =
 sum ::
   List Int
   -> Int
-sum =
-  error "todo: Course.List#sum"
+sum = foldRight (+) 0
+
 
 -- | Return the length of the list.
 --
@@ -118,8 +123,7 @@ sum =
 length ::
   List a
   -> Int
-length =
-  error "todo: Course.List#length"
+length = foldRight (\_ b -> (b + 1)) 0
 
 -- | Map the given function on each element of the list.
 --
@@ -133,8 +137,7 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo: Course.List#map"
+map f = foldRight ((:.) . f) Nil
 
 -- | Return elements satisfying the given predicate.
 --
@@ -150,8 +153,7 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo: Course.List#filter"
+filter f = foldRight (\a' b' -> if (f a') then a' :. b' else b') Nil
 
 -- | Append two lists to a new list.
 --
@@ -169,8 +171,7 @@ filter =
   List a
   -> List a
   -> List a
-(++) =
-  error "todo: Course.List#(++)"
+(++) a b = foldRight (:.) b a
 
 infixr 5 ++
 
@@ -187,8 +188,7 @@ infixr 5 ++
 flatten ::
   List (List a)
   -> List a
-flatten =
-  error "todo: Course.List#flatten"
+flatten = foldRight (++) Nil
 
 -- | Map a function then flatten to a list.
 --
@@ -204,8 +204,7 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  error "todo: Course.List#flatMap"
+flatMap f a = flatten (map f a)
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
@@ -214,8 +213,7 @@ flatMap =
 flattenAgain ::
   List (List a)
   -> List a
-flattenAgain =
-  error "todo: Course.List#flattenAgain"
+flattenAgain = flatMap id
 
 -- | Convert a list of optional values to an optional list of values.
 --
@@ -242,8 +240,7 @@ flattenAgain =
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional =
-  error "todo: Course.List#seqOptional"
+seqOptional = foldRight (\a b -> a.mapOptional(a :. b)) (Full Nil)    -- foldRight (\a b -> (foldRight (:.) Nil a) :. b) (Full Nil) map flatten
 
 -- | Find the first element in the list matching the predicate.
 --
