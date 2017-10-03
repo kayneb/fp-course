@@ -237,10 +237,16 @@ flattenAgain = flatMap id
 --
 -- >>> seqOptional (Empty :. map Full infinity)
 -- Empty
+
 seqOptional ::
   List (Optional a)
   -> Optional (List a)
-seqOptional = foldRight (\a b -> a.mapOptional(a :. b)) (Full Nil)    -- foldRight (\a b -> (foldRight (:.) Nil a) :. b) (Full Nil) map flatten
+seqOptional = foldRight (\currentVal -> bindOptional (\acc -> mapOptional (\v -> v :. acc) currentVal)) (Full Nil)
+
+seqOptional' ::
+  List (Optional a)
+  -> Optional (List a)
+seqOptional' = foldRight (twiceOptional (:.)) (Full Nil)
 
 -- | Find the first element in the list matching the predicate.
 --
