@@ -16,22 +16,6 @@ data Optional a =
   | Empty
   deriving (Eq, Show)
 
-x :: Bool
-x = True
-
-g :: Bool -> Int -> P.String
-g True i = show i
-g False _ = "ignored"
-
-ignored :: Int -> P.String
-ignored = g False
-
-g' :: Bool -> Int -> P.String
-g' = \b i -> 
-  case b of
-    True -> show i
-    False -> "ignored"
-
 -- | Map the given function on the possible value.
 --
 -- >>> mapOptional (+1) Empty
