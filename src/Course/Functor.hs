@@ -103,7 +103,7 @@ instance Functor((,) t) where
   -> f b
   -> f a
 (<$) =
-  error "todo: Course.Functor#(<$)"
+  (<$>) . const
 
 -- | Anonymous map producing unit value.
 --
